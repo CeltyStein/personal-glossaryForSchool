@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="manifest" href="./manifest.json"><meta name="theme-color" content="#0f172a">
+<title>Evidence Handling — Glossary</title>
+<style>
+:root{--bg:#0f172a;--fg:#e2e8f0;--muted:#94a3b8;--card:#111827;--chip:#1f2937;--border:#1f2937;--accent:#22c55e;}
+:root[data-theme="light"]{--bg:#f8fafc;--fg:#0f172a;--muted:#475569;--card:#ffffff;--chip:#eef2f7;--border:#e2e8f0;}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+header.sticky{position:sticky;top:0;z-index:60;background:linear-gradient(180deg,rgba(15,23,42,.98),rgba(15,23,42,.92));backdrop-filter:saturate(180%) blur(8px);padding:12px 14px;border-bottom:1px solid var(--border)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.title{font-weight:800;font-size:18px}.spacer{flex:1}
+.tabs{display:flex;gap:8px;margin-top:8px}.tab{padding:8px 12px;border-radius:10px;border:1px solid var(--border);cursor:pointer}.tab.active{background:var(--chip)}
+input[type="search"],select,button{width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--border);background:#0b1222;color:var(--fg)}
+.controls{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}@media(min-width:720px){.controls{grid-template-columns:1.2fr .8fr .8fr .6fr .6fr}}
+.counter{font-size:12px;color:var(--muted);margin-top:6px}.az{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.az a{color:var(--fg);text-decoration:none;border:1px solid var(--border);padding:4px 8px;border-radius:8px;font-size:12px}
+main{padding:12px}.section-title{position:sticky;top:58px;background:var(--bg);padding:6px 10px;border-left:3px solid var(--accent);margin:14px 0 8px 0;z-index:40}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px;margin:10px 0;box-shadow:0 4px 10px rgba(0,0,0,.08)}
+.term{font-weight:800;font-size:17px;line-height:1.2}.meta{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 6px 0}
+.chip{background:var(--chip);color:var(--fg);font-size:11px;padding:4px 8px;border-radius:999px;border:1px solid var(--border)}
+.def{color:var(--fg);font-size:14px;line-height:1.45;margin-top:8px}.muted{color:var(--muted);font-size:12px}
+.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--fg);border-radius:10px;padding:8px 10px;font-size:13px}
+mark{background:#fde68a;color:#111827;padding:0 2px;border-radius:4px}.footer-space{height:60px}
+.ref{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border:1px solid var(--border);border-radius:10px;margin:6px 0;background:var(--card)}
+a.nav{color:var(--fg);text-decoration:none;border:1px solid var(--border);padding:6px 10px;border-radius:10px;font-size:12px}
+</style>
+</head>
+<body>
+<header class="sticky">
+  <div class="row" style="justify-content:space-between;align-items:center;">
+    <div class="title">Evidence Handling — Glossary</div>
+    <div class="spacer"></div>
+    <button id="theme" class="btn-ghost" title="Toggle theme" onclick="toggleTheme()"></button>
+  </div>
+  <div class="tabs">
+    <div id="tab-dict" class="tab active">Dictionary (A–Z)</div>
+    <div id="tab-refs" class="tab">References (A–Z)</div>
+  </div>
+  <div class="controls" id="controls-dict">
+    <input id="q" type="search" placeholder="Search term, alias, definition…" autocomplete="off">
+    <select id="tag"><option value="">All tags</option></select>
+    <select id="sort"><option value="term">Sort: Term A→Z</option><option value="freq">Sort: Frequency ↓</option></select>
+    <button id="clear" class="btn-ghost">Clear</button>
+    <a class="nav" href="./index.html">All Terms</a>
+  </div>
+  <div class="controls" id="controls-refs" style="display:none;">
+    <input id="qref" type="search" placeholder="Search references…" autocomplete="off">
+    <div></div><div></div><div></div>
+    <a class="nav" href="./index.html">All Terms</a>
+  </div>
+  <div class="az" id="az-bar"></div>
+  <div class="counter"><span id="count"></span></div>
+</header>
+<main id="dict-view"></main>
+<main id="refs-view" style="display:none;"></main>
+<div class="footer-space"></div>
+<script>
+const DATA = [{"Term": "Chain", "Aliases": "", "Acronym Expansion": "", "Draft definition (from your docs)": "(\"Comprehending the Chain of Custody for Digital Evidence in Judicial Proceedings\", n.d.)\nThe Problem: PowerShell’s Hashing Illusion.", "Tag": "Evidence Handling", "Course": "CIS602", "Module": "Module 3", "Citation (doc, sentence #)": "Stein_SantiagoMateo_FA25-CIS602_Module3_Essay_DataAquisition_ValidationOfData_Prompts.docx, s#66", "Sources": "Chapter3_WritingAssigment_From Single DES to Triple DES – Adapting to Cryptanalytic Threatsby_Santiago_Mateo_Stein_CIS-601-OL01_IntroductionTo_Cryptography.docx; Stein_SantiagoMateo_FA25-CIS602_Module3_Essay_DataAquisition_ValidationOfData_Prompts.docx", "Term frequency (rough)": 5}, {"Term": "Chain Of Custody", "Aliases": "", "Acronym Expansion": "", "Draft definition (from your docs)": "In conclusion, this meticulous documentation serves as a unbroken chain of custody, providing the legal foundation necessary for evidence to be used in a court of law, which is a vital part of the process, or in this case, in prosecuting bad actors and holding them accountable.", "Tag": "Evidence Handling", "Course": "CIS-601", "Module": "Module 4", "Citation (doc, sentence #)": "Module4_Essay_Seizing Digital Evidence_vThe Plain View Doctrine and Its Limitations_Santiago_Mateo_Stein_FA25-CIS-601-OL01.docx, s#46", "Sources": "Chapter3_WritingAssigment_From Single DES to Triple DES – Adapting to Cryptanalytic Threatsby_Santiago_Mateo_Stein_CIS-601-OL01_IntroductionTo_Cryptography.docx; Equipping the forensic workstatsion prompt 1 and Lab management prompt 2 essay by Santiago Mateo Stein 25FA CIS-602-OL01.docx; Module 9 Essay Managing Scope Creep & Password Recovery Method_Santiago_Mateo_Stein_CIS-602-OL01.docx; Module4_Essay_Seizing Digital Evidence_vThe Plain View Doctrine and Its Limitations_Santiago_Mateo_Stein_FA25-CIS-601-OL01.docx; Module_8_Essay_Types_of_Graphics_Files_and_Data_Compression_in_Graphics_Santiago Mateo Stein2.docx; Public v. Private Investigators Essay-1.docx; Public v. Private Investigators Essay-2.docx; Stein_SantiagoMateo_FA25-CIS602_Module3_Essay_DataAquisition_ValidationOfData_Prompts.docx", "Term frequency (rough)": 11}, {"Term": "Comprehending", "Aliases": "", "Acronym Expansion": "", "Draft definition (from your docs)": "(\"Comprehending the Chain of Custody for Digital Evidence in Judicial Proceedings\", n.d.)\nThe Problem: PowerShell’s Hashing Illusion.", "Tag": "Evidence Handling", "Course": "CIS602", "Module": "Module 3", "Citation (doc, sentence #)": "Stein_SantiagoMateo_FA25-CIS602_Module3_Essay_DataAquisition_ValidationOfData_Prompts.docx, s#66", "Sources": "Stein_SantiagoMateo_FA25-CIS602_Module3_Essay_DataAquisition_ValidationOfData_Prompts.docx", "Term frequency (rough)": 1}, {"Term": "Custody", "Aliases": "", "Acronym Expansion": "", "Draft definition (from your docs)": "(\"Comprehending the Chain of Custody for Digital Evidence in Judicial Proceedings\", n.d.)\nThe Problem: PowerShell’s Hashing Illusion.", "Tag": "Evidence Handling", "Course": "CIS602", "Module": "Module 3", "Citation (doc, sentence #)": "Stein_SantiagoMateo_FA25-CIS602_Module3_Essay_DataAquisition_ValidationOfData_Prompts.docx, s#66", "Sources": "Chapter3_WritingAssigment_From Single DES to Triple DES – Adapting to Cryptanalytic Threatsby_Santiago_Mateo_Stein_CIS-601-OL01_IntroductionTo_Cryptography.docx; Stein_SantiagoMateo_FA25-CIS602_Module3_Essay_DataAquisition_ValidationOfData_Prompts.docx", "Term frequency (rough)": 4}, {"Term": "Regardless", "Aliases": "", "Acronym Expansion": "", "Draft definition (from your docs)": "Regardless of sector, investigators follow forensic procedures to preserve evidence integrity, document the chain of custody, use similar tools, conduct risk assessments, and support either legal or corporate processes.", "Tag": "Evidence Handling", "Course": "", "Module": "", "Citation (doc, sentence #)": "Public v. Private Investigators Essay-2.docx, s#21", "Sources": "Module4_Essay_Seizing Digital Evidence_vThe Plain View Doctrine and Its Limitations_Santiago_Mateo_Stein_FA25-CIS-601-OL01.docx; Public v. Private Investigators Essay-1.docx; Public v. Private Investigators Essay-2.docx", "Term frequency (rough)": 3}];
+
+function explodeSources(){
+  const map=new Map();
+  (DATA||[]).forEach(r=>{
+    const srcs=String(r["Sources"]||"").split(";").map(s=>s.trim()).filter(Boolean);
+    srcs.forEach(s=> map.set(s,(map.get(s)||0)+1));
+  });
+  return Array.from(map.entries()).map(([name,count])=>({name,count})).sort((a,b)=>a.name.localeCompare(b.name));
+}
+const REFS = explodeSources();
+const LETTERS = Array.from({length:26},(_,i)=>String.fromCharCode(65+i));
+
+function toggleTheme(){
+  const cur=document.documentElement.getAttribute('data-theme')||'dark';
+  const next=cur==='light'?'dark':'light';
+  document.documentElement.setAttribute('data-theme',next);
+  localStorage.setItem('theme',next);
+  document.getElementById('theme').textContent=next==='light'?'🌞':'🌙';
+}
+(function initTheme(){
+  const saved=localStorage.getItem('theme')||'dark';
+  document.documentElement.setAttribute('data-theme',saved);
+  document.getElementById('theme').textContent=saved==='light'?'🌞':'🌙';
+})();
+
+function esc(s){return (s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
+function highlight(text,q){
+  if(!q) return esc(text||''); try{const re=new RegExp('('+q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','ig');return esc(text||'').replace(re,'<mark>$1</mark>');}catch(e){return esc(text||'');}
+}
+function letterOf(term){const c=(term||'').trim().charAt(0).toUpperCase();return LETTERS.includes(c)?c:'#';}
+
+const elTabDict=document.getElementById('tab-dict');
+const elTabRefs=document.getElementById('tab-refs');
+const elControlsDict=document.getElementById('controls-dict');
+const elControlsRefs=document.getElementById('controls-refs');
+const elDictView=document.getElementById('dict-view');
+const elRefsView=document.getElementById('refs-view');
+const elCount=document.getElementById('count');
+const elAz=document.getElementById('az-bar');
+const elQ=document.getElementById('q');
+const elTag=document.getElementById('tag');
+const elSort=document.getElementById('sort');
+const elClr=document.getElementById('clear');
+const elQref=document.getElementById('qref');
+
+(function fillTags(){
+  const tags = Array.from(new Set((DATA||[]).map(r=>String(r.Tag||'').trim()).filter(Boolean))).sort();
+  tags.forEach(t=>{const opt=document.createElement('option');opt.value=t;opt.textContent=t;elTag.appendChild(opt);});
+})();
+
+elTabDict.onclick=()=>{elTabDict.classList.add('active');elTabRefs.classList.remove('active');elControlsDict.style.display='';elControlsRefs.style.display='none';elDictView.style.display='';elRefsView.style.display='none';buildAZ('dict');buildDict();};
+elTabRefs.onclick=()=>{elTabRefs.classList.add('active');elTabDict.classList.remove('active');elControlsRefs.style.display='';elControlsDict.style.display='none';elRefsView.style.display='';elDictView.style.display='none';buildAZ('refs');buildRefs();};
+
+function buildAZ(mode){
+  elAz.innerHTML=''; LETTERS.forEach(L=>{const a=document.createElement('a');a.textContent=L;a.href = (mode==='dict')?('#letter-'+L):('#ref-'+L); elAz.appendChild(a);});
+}
+
+let t; function onChange(){clearTimeout(t);t=setTimeout(buildDict,140);}
+elQ.addEventListener('input', onChange); elTag.addEventListener('change', buildDict); elSort.addEventListener('change', buildDict);
+elClr.addEventListener('click', ()=>{elQ.value='';elTag.value='';elSort.value='term';buildDict();});
+
+function buildDict(){
+  const q=(elQ.value||'').trim().toLowerCase(); const tg=(elTag.value||'').trim().toLowerCase();
+  let arr=(DATA||[]).filter(r=>!tg || String(r.Tag||'').toLowerCase()===tg);
+  if(q){arr=arr.filter(r=>(r.Term+' '+r.Aliases+' '+r["Acronym Expansion"]+' '+r["Draft definition (from your docs)"]).toLowerCase().includes(q));}
+  if(elSort.value==='freq'){arr.sort((a,b)=>(b["Term frequency (rough)"]||0)-(a["Term frequency (rough)"]||0)||a.Term.localeCompare(b.Term));}
+  else{arr.sort((a,b)=>a.Term.localeCompare(b.Term));}
+  elDictView.innerHTML=''; let currentLetter=null,count=0;
+  arr.forEach((r,i)=>{
+    const L=letterOf(r.Term);
+    if(L!==currentLetter){currentLetter=L;const h=document.createElement('div');h.className='section-title';h.id='letter-'+L;h.textContent=L;elDictView.appendChild(h);}
+    const card=document.createElement('div'); card.className='card';
+    const aliases=r.Aliases?` <span class="chip">Aliases: ${esc(r.Aliases)}</span>`:"";
+    const exp=r["Acronym Expansion"]?` <span class="chip">${esc(r["Acronym Expansion"])}</span>`:"";
+    const tag=r.Tag?`<span class="chip">${esc(r.Tag)}</span>`:"";
+    const course=r.Course?`<span class="chip">${esc(r.Course)}</span>`:"";
+    const module=r.Module?`<span class="chip">${esc(r.Module)}</span>`:"";
+    const freq=(r["Term frequency (rough)"]||0);
+    const freqChip=freq?`<span class="chip">Freq: ${freq}</span>`:"";
+    const citation=r["Citation (doc, sentence #)"]?`<div class="muted">Citation: ${esc(r["Citation (doc, sentence #)"])}</div>`:"";
+    const sources=r.Sources?`<div class="muted">Sources: ${esc(r.Sources)}</div>`:"";
+    const defId='def-'+i+'-'+Math.random().toString(36).slice(2,7);
+    card.innerHTML=`
+      <div class="term">${highlight(r.Term, q)}</div>
+      <div class="meta">${tag} ${course} ${module} ${freqChip} ${aliases} ${exp}</div>
+      <div id="${defId}" class="def">${highlight(r["Draft definition (from your docs)"], q)}</div>
+      <div class="row" style="margin-top:8px;gap:8px;">
+        <button class="btn-ghost copy-btn" data-target="${defId}">Copy definition</button>
+      </div>
+      ${citation}
+      ${sources}
+    `;
+    elDictView.appendChild(card); count++;
+  });
+  elCount.textContent = count + " result" + (count===1?"":"s");
+  document.querySelectorAll('.copy-btn').forEach(btn=>{
+    btn.onclick=()=>{
+      const target=document.getElementById(btn.dataset.target); if(!target) return;
+      const tmp=document.createElement('textarea'); tmp.value=target.innerText.trim(); document.body.appendChild(tmp); tmp.select();
+      try{document.execCommand('copy');}catch(e){} document.body.removeChild(tmp);
+      btn.textContent='Copied!'; setTimeout(()=>btn.textContent='Copy definition',900);
+    };
+  });
+}
+
+function buildRefs(){
+  const elRefsView=document.getElementById('refs-view'); const elQref=document.getElementById('qref');
+  const q=(elQref.value||'').trim().toLowerCase();
+  elRefsView.innerHTML=''; let currentLetter=null,count=0;
+  REFS.filter(r=>!q||r.name.toLowerCase().includes(q)).forEach(ref=>{
+    const c=(ref.name||'').trim().charAt(0).toUpperCase(); const L=LETTERS.includes(c)?c:'#';
+    if(L!==currentLetter){currentLetter=L;const h=document.createElement('div');h.className='section-title';h.id='ref-'+L;h.textContent=L;elRefsView.appendChild(h);}
+    const div=document.createElement('div'); div.className='ref';
+    div.innerHTML=`<div class="name">${esc(ref.name)}</div><div class="count">${ref.count} term(s)</div>`;
+    div.onclick=()=>{document.getElementById('tab-dict').click(); document.getElementById('q').value=ref.name; buildDict(); window.scrollTo({top:0,behavior:'smooth'});};
+    elRefsView.appendChild(div); count++;
+  });
+  document.getElementById('count').textContent = count + " reference" + (count===1?"":"s");
+}
+document.getElementById('qref').addEventListener('input', ()=>{buildRefs();});
+
+buildAZ('dict'); buildDict();
+function buildAZ(mode){
+  const elAz=document.getElementById('az-bar'); elAz.innerHTML='';
+  LETTERS.forEach(L=>{const a=document.createElement('a'); a.textContent=L; a.href=mode==='dict'?('#letter-'+L):('#ref-'+L); elAz.appendChild(a);});
+}
+
+if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('./sw.js').catch(()=>{});});}
+</script>
+</body></html>
