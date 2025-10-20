@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="manifest" href="./manifest.json"><meta name="theme-color" content="#0f172a">
+<title>Top 100 Cram Sheet</title>
+<style>
+:root{--bg:#0f172a;--fg:#e2e8f0;--muted:#94a3b8;--card:#111827;--border:#1f2937}
+:root[data-theme="light"]{--bg:#f8fafc;--fg:#0f172a;--muted:#475569;--card:#ffffff;--border:#e2e8f0}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+header{position:sticky;top:0;z-index:40;background:linear-gradient(180deg,rgba(15,23,42,.98),rgba(15,23,42,.92));padding:12px;border-bottom:1px solid var(--border)}
+h1{margin:0;font-size:18px}main{padding:12px}
+input[type=search]{width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--border);background:#0b1222;color:var(--fg)}
+.controls{display:flex;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap}
+.btn{padding:8px 10px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--fg)}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px;margin:8px 0}
+.term{font-weight:800}.def{margin-top:6px;line-height:1.35}.small{color:var(--muted);font-size:12px}
+.grid{display:grid;grid-template-columns:1fr;gap:8px}@media(min-width:720px){.grid{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<header>
+  <div style="display:flex;align-items:center;gap:8px;justify-content:space-between;">
+    <h1>Top 100 Cram Sheet</h1>
+    <div style="display:flex;gap:6px;">
+      <a class="btn" href="./index.html">← Glossary</a>
+      <button id="copyAll" class="btn">Copy all</button>
+    </div>
+  </div>
+  <div class="controls">
+    <input id="q" type="search" placeholder="Filter terms…" autocomplete="off">
+    <span class="small" id="count"></span>
+  </div>
+</header>
+<main><div id="list" class="grid"></div></main>
+
+<script>
+// pull the embedded DATA array out of index.html so this page works with your current site
+async function getDATA(){
+  const src = await fetch('./index.html').then(r=>r.text());
+  const m = src.match(/const\s+DATA\s*=\s*(\[[\s\S]*?\]);/); // finds "const DATA = [ ... ];"
+  if(!m) throw new Error('DATA not found in index.html');
+  return JSON.parse(m[1]);
+}
+const elQ=document.getElementById('q'), elList=document.getElementById('list'), elCount=document.getElementById('count');
+function esc(s){return (s||'').replace(/[&<>\"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+function short(s,l=160){s=String(s||'').replace(/\s+/g,' ').trim();return s.length>l?s.slice(0,l)+'…':s}
+function render(items,q=''){
+  const arr = items.filter(x => (x.Term+' '+x["Draft definition (from your docs)"]).toLowerCase().includes(q.toLowerCase()));
+  elList.innerHTML='';
+  arr.forEach(r=>{
+    const div=document.createElement('div'); div.className='card';
+    div.innerHTML = `<div class="term">${esc(r.Term)}</div><div class="def">${esc(short(r["Draft definition (from your docs)"]))}</div>`;
+    elList.appendChild(div);
+  });
+  elCount.textContent = `${arr.length} / ${items.length}`;
+}
+(async ()=>{
+  let data = await getDATA();
+  data.forEach(d=>d._f = +d["Term frequency (rough)"]||0);
+  data.sort((a,b)=> b._f - a._f || a.Term.localeCompare(b.Term));
+  const top = data.slice(0,100).map(d=>({Term:d.Term, "Draft definition (from your docs)": d["Draft definition (from your docs)"]}));
+  render(top);
+  elQ.addEventListener('input', ()=>render(top, elQ.value));
+  document.getElementById('copyAll').onclick=()=>{
+    const text = top.map(x=>`• ${x.Term} — ${short(x["Draft definition (from your docs)"])}`).join('\n');
+    const ta=document.createElement('textarea'); ta.value=text; document.body.appendChild(ta); ta.select();
+    try{document.execCommand('copy');}catch(e){} document.body.removeChild(ta);
+    const btn=document.getElementById('copyAll'); btn.textContent='Copied!'; setTimeout(()=>btn.textContent='Copy all',900);
+  };
+})();
+if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('./sw.js').catch(()=>{});});}
+</script>
+</body>
+</html>
