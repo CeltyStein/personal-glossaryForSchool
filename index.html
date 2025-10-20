@@ -32,8 +32,27 @@ a.nav{color:var(--fg);text-decoration:none;border:1px solid var(--border);paddin
     <div class="title">Personal Glossary</div>
     <div class="spacer"></div>
     <a class="nav" href="./cram.html">Top 100</a>
-    <button id="theme" class="btn-ghost" title="Toggle theme" onclick="toggleTheme()"></button>
+<button id="theme" class="btn-ghost" title="Toggle theme" onclick="toggleTheme()">🌙</button>
   </div>
+<script>
+function toggleTheme(){
+  const cur = document.documentElement.getAttribute('data-theme') || 'dark';
+  const next = cur === 'light' ? 'dark' : 'light';   // <-- no extra space!
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+  const b = document.getElementById('theme');
+  if (b) b.textContent = next === 'light' ? '🌞' : '🌙';
+}
+
+function initTheme(){
+  const saved = localStorage.getItem('theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', saved);
+  const b = document.getElementById('theme');
+  if (b) b.textContent = saved === 'light' ? '🌞' : '🌙';
+}
+
+initTheme();
+</script>
   <div class="tabs">
     <div id="tab-dict" class="tab active">Dictionary (A–Z)</div>
     <div id="tab-refs" class="tab">References (A–Z)</div>
